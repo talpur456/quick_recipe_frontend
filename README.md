@@ -26,7 +26,7 @@ This frontend requires a backend server that provides recipe data. By default, i
 
 ## Usage
 1. Enter ingredients in the search box (comma-separated)
-2. Click Find Recipes. The frontend will fetch recipes from the backend server
+2. Click Find Recipes. The frontend will request the backend server and it wlll fetch the recipies from spoonacular
 3. Click Prepare on a recipe card to view recipe details (ingredients, instructions, image)
 
 ## License
