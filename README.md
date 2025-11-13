@@ -14,7 +14,7 @@ A simple web app that helps you find recipes based on the ingredients you have a
 
 ## Installation and Setup
 ### Clone the repository
-git clone https://github.com/talpur456/quick_recipe_frontend.git
+git clone https://github.com/talpur456/quick_recipe.git
 cd quick_recipe_frontend
 
 ### Backend Requirement
