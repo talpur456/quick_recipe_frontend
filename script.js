@@ -2,24 +2,42 @@ const findBtn = document.getElementById("find-btn");
 const ingredientInput = document.getElementById("ingredient-input");
 const recipeList = document.getElementById("recipe-list");
 
+// Helper: safely create text element
+function createSafeElement(tag, text) {
+    const el = document.createElement(tag);
+    el.textContent = text;
+    return el;
+}
+
+// Clear and show message
+function showMessage(msg) {
+    recipeList.innerHTML = "";
+    recipeList.appendChild(createSafeElement("p", msg));
+}
+
 findBtn.addEventListener("click", async () => {
     const input = ingredientInput.value.trim().toLowerCase();
     if (!input) {
-        recipeList.innerHTML = "<p>Please enter ingredient(s).</p>";
+        showMessage("Please enter ingredient(s).");
         return;
     }
 
     const ingredients = input.split(",").map(i => i.trim()).filter(Boolean);
-    recipeList.innerHTML = "<p>Loading recipes…</p>";
+    if (ingredients.length === 0) {
+        showMessage("Please enter valid ingredient(s).");
+        return;
+    }
+
+    showMessage("Loading recipes…");
 
     try {
-        // Call your Render backend
-        const url = `https://your-backend-on-render.onrender.com/api/recipes?ingredients=${ingredients.join(',')}`;
+        const url = `https://your-backend-on-render.onrender.com/api/recipes?ingredients=${encodeURIComponent(ingredients.join(','))}`;
         const res = await fetch(url);
+        if (!res.ok) throw new Error("Failed to fetch recipes");
         const data = await res.json();
 
-        if (!data || data.length === 0) {
-            recipeList.innerHTML = `<p>No recipes found containing: ${ingredients.join(", ")}</p>`;
+        if (!Array.isArray(data) || data.length === 0) {
+            showMessage(`No recipes found containing: ${ingredients.join(", ")}`);
             return;
         }
 
@@ -28,17 +46,38 @@ findBtn.addEventListener("click", async () => {
         data.forEach(recipe => {
             const card = document.createElement("div");
             card.classList.add("recipe-card");
-            card.innerHTML = `
-                <h3>${recipe.title}</h3>
-                <img src="${recipe.image}" alt="${recipe.title}" />
-                <p><strong>Used:</strong> ${recipe.usedIngredients.map(i => i.name).join(", ")}</p>
-                <p class="missing"><strong>Missing:</strong> ${recipe.missedIngredients.map(i => i.name).join(", ")}</p>
-                <a href="recipe.html?id=${recipe.id}" class="prepare-btn">Prepare</a>
-            `;
+
+            // Title safely
+            const title = createSafeElement("h3", recipe.title || "Untitled Recipe");
+            card.appendChild(title);
+
+            // Image safely
+            if (recipe.image) {
+                const img = document.createElement("img");
+                img.src = recipe.image;
+                img.alt = recipe.title || "Recipe Image";
+                card.appendChild(img);
+            }
+
+            // Used ingredients
+            const used = createSafeElement("p", `Used: ${recipe.usedIngredients.map(i => i.name).join(", ")}`);
+            card.appendChild(used);
+
+            // Missing ingredients
+            const missing = createSafeElement("p", `Missing: ${recipe.missedIngredients.map(i => i.name).join(", ")}`);
+            missing.classList.add("missing");
+            card.appendChild(missing);
+
+            // Prepare button
+            const prepareBtn = document.createElement("a");
+            prepareBtn.classList.add("prepare-btn");
+            prepareBtn.textContent = "Prepare";
+            prepareBtn.href = `recipe.html?id=${encodeURIComponent(recipe.id)}`;
+            card.appendChild(prepareBtn);
+
             recipeList.appendChild(card);
         });
 
-        // Wait for images to load before Masonry layout
         imagesLoaded(recipeList, function () {
             new Masonry(recipeList, {
                 itemSelector: '.recipe-card',
@@ -49,6 +88,7 @@ findBtn.addEventListener("click", async () => {
         });
 
     } catch (err) {
-        recipeList.innerHTML = `<p>Error fetching recipes: ${err}</p>`;
+        showMessage("Error fetching recipes. Please try again later.");
+        console.error(err);
     }
 });
