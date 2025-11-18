@@ -2,6 +2,28 @@
 
 A simple web app that helps you find recipes based on the ingredients you have at home. Enter your ingredients, see recipe suggestions, and view detailed recipe information including ingredients, instructions, and images.
 
+## Screenshots
+
+1. Recipe Search (Main Page)  
+*User enters ingredients and searches for recipes.*
+![Main Search](assets/screenshot_01.png)
+
+2. Recipe Summary View  
+*Shows recipe image and name on the Recipe Details page.*
+![Recipe Summary](assets/screenshot_02.png)
+
+3. Recipe Instructions View  
+*Displays recipe image and instructions.*
+![Recipe Instructions](assets/screenshot_03.png)
+
+4. Full Recipe Zoomed Out  
+*All recipe information visible — title, image, and instructions included.*
+![Full Recipe View](assets/screenshot_04.png)
+
+5. Another Recipe Example  
+*Second recipe fully displayed in zoomed out view.*
+![Second Recipe Example](assets/screenshot_05.png)
+
 ## Technologies Used
 - HTML, CSS, JavaScript
 - Masonry.js & imagesLoaded for responsive layout
